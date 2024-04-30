@@ -1,8 +1,7 @@
 let GAMEDIV = document.querySelector(".GameDiv")
 
-let players = [
-
-]
+let players = []
+let mines = []
 
 function ClearDiv() {
     while (GAMEDIV.lastChild) {
@@ -32,12 +31,13 @@ function felvesz(m, n) {
     console.log(rows)
     document.querySelector(".btnIndit").disabled = false;
     players = []
+    mines = []
 }
 
 function CreatePlayers(p) {
     for (let i = 0; i < p; i++) {
-        let randomRow = RandomGen(0, rows, true)
-        let randowColumn = RandomGen(0, columns, false)
+        let randomRow = RandomGen(0, rows, true, false)
+        let randowColumn = RandomGen(0, columns, false, false)
         players.push({
             "id": i,
             "row": randomRow,
@@ -48,24 +48,45 @@ function CreatePlayers(p) {
         playerChar.classList.add("player")
         selectedElement.appendChild(playerChar)
     }
+    SpawnMines(7)
     document.querySelector(".btnIndit").disabled = true;
 }
-function RandomGen(min, max, isRow) {
+function SpawnMines(n) {
+    for (let i = 0; i < n; i++) {
+        let randomRow = RandomGen(0, rows, true, true)
+        let randowColumn = RandomGen(0, columns, false, true)
+        players.push({
+            "row": randomRow,
+            "column": randowColumn
+        })
+        let selectedElement = document.querySelector(".c" + randowColumn + "r" + randomRow)
+        selectedElement.classList.add("mine")
+    }
+}
+function RandomGen(min, max, isRow, isMine) {
     while (true) {
         let rnd = Math.floor(Math.random() * (max - min)) + min;
+        let i
         if (isRow) {
-            const i = players.findIndex(e => e.row === rnd);
-            if (i == -1) {
-                return rnd
+            if (!isMine) {
+                i = players.findIndex(e => e.row === rnd);
+            }
+            else {
+                i = mines.findIndex(e => e.row === rnd);
             }
         }
-        else{
-            const i = players.findIndex(e => e.column === rnd);
-            if (i == -1) {
-                return rnd
+        else {
+            if (!isMine) {
+                i = players.findIndex(e => e.column === rnd);
+            }
+            else {
+                i = mines.findIndex(e => e.column === rnd);
             }
         }
-        if(players.length == rows*columns){
+        if (i == -1) {
+            return rnd
+        }
+        if (players.length == rows * columns) {
             return 0
         }
     }
