@@ -24,4 +24,7 @@ body{
     width: 3vw;
     height: 3vw;
     border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
