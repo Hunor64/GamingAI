@@ -12,8 +12,8 @@ function ClearDiv() {
 
 
 
-let rows = 0
-let columns = 0
+let rows = 7
+let columns = 6
 
 felvesz(6, 7)
 
@@ -42,7 +42,7 @@ function felvesz(m, n) {
 
 
 function CreatePlayers(p) {
-    SpawnMines(7)
+    SpawnMines(0)
 
     for (let i = 0; i < p; i++) {
         let isDed = false
@@ -93,7 +93,7 @@ function SpawnMines(n) {
 
 function MovePlayers() {
     players.forEach(element => {
-        let moveDir = Math.floor(Math.random() * (5 - 1)) + 1
+        let moveDir = Math.floor(Math.random() * (4 - 1)) + 1
         let moved = false
         let bottomedOut = false
         let isDead = false
@@ -104,6 +104,7 @@ function MovePlayers() {
                     if (element.row > 0) {
                         element.row--
                         moved = true
+                        console.log("Moved up")
                     }
                     else {
                         moveDir = 2
@@ -114,6 +115,7 @@ function MovePlayers() {
                     if (element.row < rows - 1) {
                         element.row++
                         moved = true
+                        console.log("Moved down")
                     }
                     else {
                         moveDir = 3
@@ -124,6 +126,7 @@ function MovePlayers() {
                     if (element.column > 0) {
                         element.column--
                         moved = true
+                        console.log("Moved left")
                     }
                     else {
                         moveDir = 4
@@ -134,22 +137,25 @@ function MovePlayers() {
                     if (element.column < columns - 1) {
                         element.column++
                         moved = true
+                        console.log("Moved right")
                     }
                     else if (bottomedOut) {
                         kill(element)
+                        console.log("Killed")
                         isDead = true
                     }
                     else {
+                        console.log("Bottomed out")
                         bottomedOut = true
                         moveDir = 1
                     }
                     break;
             }
         }
-            let isOnMine = false
             mines.forEach(mine => {
                 if (element.row == mine.row && element.column == mine.column) {
                     kill(element)
+                    console.log("Killed by mine")
                     isDead = true
                 }
             })
@@ -168,7 +174,7 @@ function MovePlayers() {
 function kill(element){
 
     let li = document.createElement("li")
-    li.innerHTML = "Player " + element.id + " was kiled by a deadly red goo"
+    li.innerHTML = "Player " + element.id + " was kiled by deadly red goo"
     KILLS.appendChild(li)
     let index = players.findIndex(e => e.id === element.id);
     if (index !== -1) {
