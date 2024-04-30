@@ -99,6 +99,8 @@ function MovePlayers() {
         let isDead = false
         document.querySelector(".c" + element.column + "r" + element.row).removeChild(document.querySelector(".c" + element.column + "r" + element.row).firstChild)
         while (!moved || !isDead) {
+            console.log(element.row)
+            console.log(element.column)
             switch (moveDir) {
                 case 1:
                     if (element.row > 0) {
@@ -108,6 +110,7 @@ function MovePlayers() {
                     }
                     else {
                         moveDir = 2
+                        console.log(element.row)
                     }
                     break;
 
