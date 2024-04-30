@@ -1,0 +1,15 @@
+.element{
+    height: 4vw;
+    width: 4vw;
+    background: grey;
+    margin-left: 0.5vw;
+    margin-top: 0.5vw;
+}
+.mine{
+    background-color: red;
+}
+.GameDiv{
+    display: flex;
+    justify-content: center;
+
+}
