@@ -4,6 +4,9 @@
     background: grey;
     margin-left: 0.5vw;
     margin-top: 0.5vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 .mine{
     background-color: red;
@@ -12,4 +15,10 @@
     display: flex;
     justify-content: center;
 
+}
+.player{
+    background-color: greenyellow;
+    width: 3vw;
+    height: 3vw;
+    border-radius: 50%;
 }
