@@ -43,7 +43,7 @@ function felvesz(m, n) {
 
 
 function CreatePlayers(p) {
-    SpawnMines(0)
+    SpawnMines(5)
 
     for (let i = 0; i < p; i++) {
         let isDed = false
@@ -56,8 +56,8 @@ function CreatePlayers(p) {
         })
         if (!isDed) {
             players.push({
-                "id": i+1,
-                "class":"c" + randowColumn + "r" + randomRow,
+                "id": i + 1,
+                "class": "c" + randowColumn + "r" + randomRow,
                 "row": randomRow,
                 "column": randowColumn
             })
@@ -92,7 +92,7 @@ function SpawnMines(n) {
         selectedElement.classList.add("mine")
     }
 }
-function PutAllPlayersOn(){
+function PutAllPlayersOn() {
     players.forEach(element => {
         let selectedElement = document.querySelector(".c" + element.column + "r" + element.row)
         let playerChar = document.createElement("div")
@@ -105,75 +105,95 @@ function PutAllPlayersOn(){
 function MovePlayers() {
     players.forEach(element => {
         let selectedElement = document.querySelector(".c" + element.column + "r" + element.row)
-        for (let i = 0; i < GAMEDIV.children.length; i++) {
-            while (GAMEDIV.children[i].firstChild && GAMEDIV.children[i].firstChild.firstChild) {
-                GAMEDIV.children[i].firstChild.removeChild(GAMEDIV.children[i].firstChild.firstChild);
+
+        for (let row = 0; row < rows; row++) {
+            for (let column = 0; column < columns; column++) {
+                let currentSquare = document.querySelector(".c" + column + "r" + row)
+                while (currentSquare.lastChild) {
+                    currentSquare.removeChild(currentSquare.lastChild)
+                }
+
             }
-    }
+        }
+
 
         selectedElement.innerHTML = ""
         let moveDir = Math.floor(Math.random() * (4 - 1)) + 1
         let moved = false
         let whileCount = 0
-        while(!moved || whileCount < 2){
+        while (!moved || whileCount != 3) {
             whileCount++
-            if(moveDir == 1){
-                if(element.row > 0){
+            if (moveDir == 1) {
+                if (element.row > 0 && !IsPlayerThere(element.row - 1, element.column)) {
                     element.row--
                     moved = true
                     break
                 }
-                else{
+                else {
                     moveDir = 2
                 }
             }
-            if(moveDir == 2){
-                if(element.row < rows - 1){
+            if (moveDir == 2) {
+                if (element.row < rows - 1 && !IsPlayerThere(element.row + 1, element.column)) {
                     element.row++
                     moved = true
                     break
                 }
-                else{
+                else {
                     moveDir = 3
                 }
             }
-            if(moveDir == 3){
-                if(element.column > 0){
+            if (moveDir == 3) {
+                if (element.column > 0 && !IsPlayerThere(element.row, element.column - 1)) {
                     element.column--
                     moved = true
                     break
                 }
-                else{
+                else {
                     moveDir = 4
                 }
             }
-            if(moveDir == 4){
-                if(element.column < columns - 1){
+            if (moveDir == 4) {
+                if (element.column < columns - 1 && !IsPlayerThere(element.row, element.column + 1)) {
                     element.column++
                     moved = true
                     break
                 }
-                else{
+                else {
                     moveDir = 1
                 }
             }
         }
-        if (moved) {   
-            let playerChar = document.createElement("div")
-            playerChar.classList.add("c" + element.column + "r" + element.row)
-            playerChar.innerHTML = element.id
-            playerChar.classList.add("player")
-            selectedElement.appendChild(playerChar)
+        if (moved) {
+            element.class = "c" + element.column + "r" + element.row
+            mines.forEach(selectedMine => {
+                if (element.row == selectedMine.row && element.column == selectedMine.column) {
+                    kill(element)
+                }
+            })
         }
         else {
             kill(element)
         }
+
+        PutAllPlayersOn()
+
     })
+}
+function IsPlayerThere(row, column) {
+    let i = players.findIndex(e => e.row === row && e.column === column);
+    if (i !== -1) {
+        return true
+    }
+    else {
+        return false
+    }
 }
 
 function kill(element) {
     let li = document.createElement("li")
     li.innerHTML = "Player " + element.id + " was kiled by deadly red goo"
+    console.log("Player " + element.id + " was kiled by deadly red goo")
     KILLS.appendChild(li)
     let index = players.findIndex(e => e.id === element.id);
     if (index !== -1) {
@@ -183,7 +203,7 @@ function kill(element) {
 
 function RandomGen(min, max, isRow, isMine) {
     let ran = 0
-    while (ran != 500) {
+    while (ran != 100) {
         let rnd = Math.floor(Math.random() * (max - min)) + min;
         let i
         if (isRow) {
