@@ -28,3 +28,28 @@ body{
     justify-content: center;
     align-items: center;
 }
+button{
+    padding: 15px 25px;
+    margin: 10px;
+    font-size: 24px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    outline: none;
+    color: #fff;
+    background-color: #04AA6D;
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 9px #999;
+}
+.buttons{
+    display: flex;
+    justify-content: center;
+}
+.sliders{
+    display: flex;
+    justify-content: center;
+}
+input{
+    margin-right: 20px;
+}

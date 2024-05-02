@@ -1,6 +1,8 @@
 let GAMEDIV = document.querySelector(".GameDiv")
 let KILLS = document.querySelector(".kills")
 
+let inter
+
 let players = []
 let mines = []
 
@@ -12,12 +14,12 @@ function ClearDiv() {
 
 
 
-let rows = 7
-let columns = 6
+let rows = 0
+let columns = 0
 
-felvesz(6, 7)
 
 function felvesz(m, n) {
+    clearInterval(inter)
     ClearDiv()
     rows = n
     columns = m
@@ -39,11 +41,21 @@ function felvesz(m, n) {
     document.querySelector(".kills").innerHTML = ""
 }
 
-
+function UpdateSliders() {
+    if(document.querySelector(".mine").value > document.querySelector(".height").value*document.querySelector(".width").value/2){
+        document.querySelector(".mine").value = document.querySelector(".height").value*document.querySelector(".width").value/2
+    }
+    if(document.querySelector(".players").value > document.querySelector(".height").value*document.querySelector(".width").value/2){
+        document.querySelector(".players").value = document.querySelector(".height").value*document.querySelector(".width").value/2
+    }
+    document.querySelector(".mine").max = document.querySelector(".height").value*document.querySelector(".width").value/2
+    document.querySelector(".players").max = document.querySelector(".height").value*document.querySelector(".width").value/2
+}
 
 
 function CreatePlayers(p) {
-    SpawnMines(5)
+    felvesz(document.querySelector('.height').value,document.querySelector('.width').value)
+    SpawnMines(document.querySelector(".mine").value)
 
     for (let i = 0; i < p; i++) {
         let isDed = false
@@ -74,8 +86,7 @@ function CreatePlayers(p) {
         }
     }
     setTimeout(console.log("d"), 1000)
-    setInterval(MovePlayers, 1000)
-
+    inter = setInterval(MovePlayers, 1000)
 
     document.querySelector(".btnIndit").disabled = true;
 }
@@ -168,12 +179,12 @@ function MovePlayers() {
             element.class = "c" + element.column + "r" + element.row
             mines.forEach(selectedMine => {
                 if (element.row == selectedMine.row && element.column == selectedMine.column) {
-                    kill(element)
+                    kill(element,"deadly red goo")
                 }
             })
         }
         else {
-            kill(element)
+            kill(element,"other players")
         }
 
         PutAllPlayersOn()
@@ -190,10 +201,10 @@ function IsPlayerThere(row, column) {
     }
 }
 
-function kill(element) {
+function kill(element,deathMSG) {
     let li = document.createElement("li")
-    li.innerHTML = "Player " + element.id + " was kiled by deadly red goo"
-    console.log("Player " + element.id + " was kiled by deadly red goo")
+    li.innerHTML = "Player " + element.id + " was kiled by "+deathMSG
+    console.log("Player " + element.id + " was kiled by "+deathMSG)
     KILLS.appendChild(li)
     let index = players.findIndex(e => e.id === element.id);
     if (index !== -1) {

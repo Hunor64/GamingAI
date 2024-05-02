@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hu">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,14 +9,19 @@
 </head>
 <body>
     <div class="container">
-        <button class="btnFelvesz" onclick="felvesz(6,7)">Felvesz</button>
-        <button class="btnIndit" onclick="CreatePlayers(5)">Indít</button>
-        <div class="GameDiv">
-
+        <div class="buttons">
+            <button class="btnFelvesz" onclick="felvesz(document.querySelector('.height').value,document.querySelector('.width').value)">Felvesz</button>
+            <button class="btnIndit" onclick="CreatePlayers(document.querySelector('.players').value)">Indít</button>
         </div>
-        <ul class="kills">
+        <div class="sliders">
+            <p>height</p><input type="range" min="1" max="10" class="height" value="5" oninput="UpdateSliders()">
+            <p>width</p><input type="range" min="1" max="20" class="width" value="10" oninput="UpdateSliders()">
+            <p>mines</p><input type="range" min="1" max="10" class="mine" value="5">
+            <p>players</p><input type="range" min="1" max="10" class="players" value="5">
+        </div>
+        <div class="GameDiv"></div>
 
-        </ul>
+        <ul class="kills"></ul>
     </div>
 </body>
 </html>
