@@ -42,14 +42,11 @@ function felvesz(m, n) {
 }
 
 function UpdateSliders() {
-    if(document.querySelector(".mine").value > document.querySelector(".height").value*document.querySelector(".width").value/2){
-        document.querySelector(".mine").value = document.querySelector(".height").value*document.querySelector(".width").value/2
-    }
-    if(document.querySelector(".players").value > document.querySelector(".height").value*document.querySelector(".width").value/2){
-        document.querySelector(".players").value = document.querySelector(".height").value*document.querySelector(".width").value/2
-    }
-    document.querySelector(".mine").max = document.querySelector(".height").value*document.querySelector(".width").value/2
-    document.querySelector(".players").max = document.querySelector(".height").value*document.querySelector(".width").value/2
+    let max = Math.floor(document.querySelector(".height").value*document.querySelector(".width").value/2)
+    document.querySelector(".mine").value = Math.min(document.querySelector(".mine").value, max)
+    document.querySelector(".players").value = Math.min(document.querySelector(".players").value, max)
+    document.querySelector(".mine").max = max
+    document.querySelector(".players").max = max
 }
 
 
@@ -85,7 +82,7 @@ function CreatePlayers(p) {
             KILLS.appendChild(li)
         }
     }
-    setTimeout(console.log("d"), 1000)
+    setTimeout(console.log("Started Interval"), 1000)
     inter = setInterval(MovePlayers, 1000)
 
     document.querySelector(".btnIndit").disabled = true;
