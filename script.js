@@ -36,6 +36,7 @@ function felvesz(m, n) {
     document.querySelector(".btnIndit").disabled = false;
     players = []
     mines = []
+    document.querySelector(".kills").innerHTML = ""
 }
 
 
@@ -56,13 +57,14 @@ function CreatePlayers(p) {
         if (!isDed) {
             players.push({
                 "id": i+1,
+                "class":"c" + randowColumn + "r" + randomRow,
                 "row": randomRow,
                 "column": randowColumn
             })
             let selectedElement = document.querySelector(".c" + randowColumn + "r" + randomRow)
             let playerChar = document.createElement("div")
+            playerChar.innerText = i + 1
             playerChar.classList.add("player")
-            playerChar.innerHTML = i+1
             selectedElement.appendChild(playerChar)
         }
         else {
@@ -73,7 +75,7 @@ function CreatePlayers(p) {
     }
     setTimeout(console.log("d"), 1000)
     setInterval(MovePlayers, 1000)
-    
+
 
     document.querySelector(".btnIndit").disabled = true;
 }
@@ -90,92 +92,86 @@ function SpawnMines(n) {
         selectedElement.classList.add("mine")
     }
 }
-
-function MovePlayers() {
+function PutAllPlayersOn(){
     players.forEach(element => {
-        let moveDir = Math.floor(Math.random() * (4 - 1)) + 1
-        let moved = false
-        let bottomedOut = false
-        let isDead = false
-        document.querySelector(".c" + element.column + "r" + element.row).removeChild(document.querySelector(".c" + element.column + "r" + element.row).firstChild)
-        while (!moved || !isDead) {
-            console.log(element.row)
-            console.log(element.column)
-            switch (moveDir) {
-                case 1:
-                    if (element.row > 0) {
-                        element.row--
-                        moved = true
-                        console.log("Moved up")
-                    }
-                    else {
-                        moveDir = 2
-                        console.log(element.row)
-                    }
-                    break;
-
-                case 2:
-                    if (element.row < rows - 1) {
-                        element.row++
-                        moved = true
-                        console.log("Moved down")
-                    }
-                    else {
-                        moveDir = 3
-                    }
-                    break;
-
-                case 3:
-                    if (element.column > 0) {
-                        element.column--
-                        moved = true
-                        console.log("Moved left")
-                    }
-                    else {
-                        moveDir = 4
-                    }
-                    break;
-
-                case 4:
-                    if (element.column < columns - 1) {
-                        element.column++
-                        moved = true
-                        console.log("Moved right")
-                    }
-                    else if (bottomedOut) {
-                        kill(element)
-                        console.log("Killed")
-                        isDead = true
-                    }
-                    else {
-                        console.log("Bottomed out")
-                        bottomedOut = true
-                        moveDir = 1
-                    }
-                    break;
-            }
-        }
-            mines.forEach(mine => {
-                if (element.row == mine.row && element.column == mine.column) {
-                    kill(element)
-                    console.log("Killed by mine")
-                    isDead = true
-                }
-            })
-            if (!isDead) {
-                console.log(element)
-                let selectedElement = document.querySelector(".c" + element.column + "r" + element.row)
-                let playerChar = document.createElement("div")
-                playerChar.innerHTML = element.id
-                playerChar.classList.add("player")
-                selectedElement.appendChild(playerChar)
-            }
-
+        let selectedElement = document.querySelector(".c" + element.column + "r" + element.row)
+        let playerChar = document.createElement("div")
+        playerChar.innerText = element.id
+        playerChar.classList.add("player")
+        selectedElement.appendChild(playerChar)
     })
 }
 
-function kill(element){
+function MovePlayers() {
+    players.forEach(element => {
+        let selectedElement = document.querySelector(".c" + element.column + "r" + element.row)
+        for (let i = 0; i < GAMEDIV.children.length; i++) {
+            while (GAMEDIV.children[i].firstChild && GAMEDIV.children[i].firstChild.firstChild) {
+                GAMEDIV.children[i].firstChild.removeChild(GAMEDIV.children[i].firstChild.firstChild);
+            }
+    }
 
+        selectedElement.innerHTML = ""
+        let moveDir = Math.floor(Math.random() * (4 - 1)) + 1
+        let moved = false
+        let whileCount = 0
+        while(!moved || whileCount < 2){
+            whileCount++
+            if(moveDir == 1){
+                if(element.row > 0){
+                    element.row--
+                    moved = true
+                    break
+                }
+                else{
+                    moveDir = 2
+                }
+            }
+            if(moveDir == 2){
+                if(element.row < rows - 1){
+                    element.row++
+                    moved = true
+                    break
+                }
+                else{
+                    moveDir = 3
+                }
+            }
+            if(moveDir == 3){
+                if(element.column > 0){
+                    element.column--
+                    moved = true
+                    break
+                }
+                else{
+                    moveDir = 4
+                }
+            }
+            if(moveDir == 4){
+                if(element.column < columns - 1){
+                    element.column++
+                    moved = true
+                    break
+                }
+                else{
+                    moveDir = 1
+                }
+            }
+        }
+        if (moved) {   
+            let playerChar = document.createElement("div")
+            playerChar.classList.add("c" + element.column + "r" + element.row)
+            playerChar.innerHTML = element.id
+            playerChar.classList.add("player")
+            selectedElement.appendChild(playerChar)
+        }
+        else {
+            kill(element)
+        }
+    })
+}
+
+function kill(element) {
     let li = document.createElement("li")
     li.innerHTML = "Player " + element.id + " was kiled by deadly red goo"
     KILLS.appendChild(li)
