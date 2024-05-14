@@ -34,7 +34,7 @@ function felvesz(m, n) {
 
     players = []
     mines = []
-    KILLS = ""
+    KILLS.innerHTML = ""
 }
 
 function UpdateSliders() {
