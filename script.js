@@ -231,7 +231,7 @@ function RandomGen() {
         }
         console.log("Generated new locations")
     }
-    let generatedNumber = Math.floor(Math.random() * (avalibleLocations.length - 0 + 1) ) + 0
+    let generatedNumber = Math.floor(Math.random() * (avalibleLocations.length) )
     let genCoords = avalibleLocations[generatedNumber]
     console.log(genCoords)
     avalibleLocations.splice(generatedNumber,1)
