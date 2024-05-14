@@ -36,7 +36,6 @@ function felvesz(m, n) {
         }
         GAMEDIV.appendChild(row)
     }
-    console.log(rows)
     document.querySelector(".btnIndit").disabled = false;
     players = []
     mines = []
@@ -59,7 +58,6 @@ function CreatePlayers(p) {
     for (let i = 0; i < p; i++) {
         let isDed = false
         let location = RandomGen()
-        console.log(location[0])
         let randomRow = location[0] 
         let randowColumn = location[1]
 
@@ -83,7 +81,7 @@ function CreatePlayers(p) {
         }
     }
     setTimeout(console.log("Started Interval"), 1000)
-    //inter = setInterval(MovePlayers, 1000)
+    inter = setInterval(MovePlayers, 1000)
 
     document.querySelector(".btnIndit").disabled = true;
 }
@@ -113,8 +111,6 @@ function PutAllPlayersOn() {
 
 function MovePlayers() {
     players.forEach(element => {
-        let selectedElement = document.querySelector(".c" + element.column + "r" + element.row)
-
         for (let row = 0; row < rows; row++) {
             for (let column = 0; column < columns; column++) {
                 let currentSquare = document.querySelector(".c" + column + "r" + row)
@@ -124,18 +120,25 @@ function MovePlayers() {
 
             }
         }
-        selectedElement.innerHTML = ""
 
 
-        let moveDir = Math.floor(Math.random() * (4 - 1)) + 1
         let moves = GetAllPossibleMoves(element.row,element.column)
-        console.log("Possible moves",moves)
-
-        
-
         if (moves.length == 0) {
             kill(element)
         }
+        else{
+            let moveInd = Math.floor(Math.random() * moves.length)
+            let whereToMove = moves[moveInd]
+            element.row= element.row - whereToMove[0]
+            
+            element.column= element.column - whereToMove[1]
+            element.class = "c" + element.column + "r" + element.row
+        }
+        let isOnMine = mines.findIndex(e => e.row === element.row && e.column === element.column)
+        if (isOnMine != -1) {
+            kill(element)
+        }
+        
         PutAllPlayersOn()
 
     })
@@ -150,28 +153,27 @@ function GetAllPossibleMoves(row,column){
         if (row-move[0]>rows-1||row-move[0]<0||column-move[1]>columns-1||column-move[1]<0) {
             wallNotThere = false
         }
-        if (isPlayerThere == -1 && isMineThere == -1 &&wallNotThere) {
+        if (isPlayerThere == -1 && isMineThere == -1 && wallNotThere) {
             canMove.push(move)
         }
-        console.log(isPlayerThere)
     })
     return canMove
 }
 
-function kill(element,deathMSG) {
+function kill(element) {
     let li = document.createElement("li")
     li.innerHTML = "Player " + element.id + " was kiled"
-    console.log("Player " + element.id + " was kiled")
     KILLS.appendChild(li)
     let index = players.findIndex(e => e.id === element.id);
     blackList.push({
         "row": element.row,
         "column": element.column
     })
+    console.log(blackList)
+
     if (index !== -1) {
         players.splice(index, 1)
     }
-    console.log(blackList)
 }
 
 function RandomGen() {
@@ -181,12 +183,9 @@ function RandomGen() {
                 avalibleLocations.push([generatedRows,generatedColumns])
             }                        
         }
-        console.log("Generated new locations")
     }
     let generatedNumber = Math.floor(Math.random() * (avalibleLocations.length) )
     let genCoords = avalibleLocations[generatedNumber]
-    console.log(genCoords)
     avalibleLocations.splice(generatedNumber,1)
-    console.log(avalibleLocations)
     return genCoords
 }
