@@ -10,6 +10,7 @@ let avalibleLocations = []
 let players = []
 let mines = []
 let blackList = []
+let useBlackList = false
 
 function loadMap() {
     rows = document.querySelector('.width').value
@@ -17,6 +18,7 @@ function loadMap() {
 
     players = []
     mines = []
+    blackList = []
     KILLS.innerHTML = ""
 
     clearInterval(inter)
@@ -73,7 +75,7 @@ function CreatePlayers() {
             "class": "c" + randowColumn + "r" + randomRow,
             "column": randowColumn,
             "row": randomRow,
-            "white list": []
+            "whiteList": []
         })
         let selectedElement = document.querySelector(".c" + randowColumn + "r" + randomRow)
         let playerChar = document.createElement("div")
@@ -82,11 +84,11 @@ function CreatePlayers() {
         selectedElement.appendChild(playerChar)
     }
     setTimeout(console.log("Started Interval"), 1000)
-    inter = setInterval(MovePlayers, 1000)
+    inter = setInterval(MovePlayers, 300)
 
     document.querySelector(".btnIndit").disabled = true;
 }
-
+let whitelist = []
 function MovePlayers() {
     players.forEach(element => {
         for (let row = 0; row < rows; row++) {
@@ -99,7 +101,9 @@ function MovePlayers() {
             }
         }
 
-        let moves = GetAllPossibleMoves(element.row, element.column)
+        whitelist = element.whiteList
+        let moves = GetAllPossibleMoves(element.row, element.column,element.whiteList)
+        
         if (moves.length == 0) {
             kill(element, " was squished to death",false)
         }
@@ -126,35 +130,72 @@ function MovePlayers() {
     })
 }
 
-function GetAllPossibleMoves(row, column) {
+function GetAllPossibleMoves(row, column, whiteList) {
     let moves = [[1, 0], [-1, 0], [0, 1], [0, -1]]
     let canMove = []
     moves.forEach(move => {
         let isPlayerThere = players.findIndex(e => e.row === row - move[0] && e.column === column - move[1])
-        let isMineThere = blackList.findIndex(e => e.row === row - move[0] && e.column === column - move[1])
         let wallNotThere = true
         if (row - move[0] > rows - 1 || row - move[0] < 0 || column - move[1] > columns - 1 || column - move[1] < 0) {
             wallNotThere = false
         }
-        if (isPlayerThere == -1 && isMineThere == -1 && wallNotThere) {
-            canMove.push(move)
+        if (useBlackList) {    
+            let isMineThere = blackList.findIndex(e => e.row === row - move[0] && e.column === column - move[1])
+            if (isPlayerThere == -1 && isMineThere == -1 && wallNotThere) {
+                canMove.push(move)
+            }
+        }
+        else{
+            if (isPlayerThere != -1) {
+                let otherWhiteList = players[players.findIndex(e => e.row === row - move[0] && e.column === column - move[1])].whiteList
+                otherWhiteList.forEach(spot => {
+                    let isContained = whitelist.findIndex(e => e === spot)
+                    if (isContained == -1) {
+                        whitelist.push(spot)
+                    }
+                })
+            }
+
+            let isMineThere = whiteList.findIndex(e => e.row === row - move[0] && e.column === column - move[1])
+            if (isPlayerThere == -1 && isMineThere == -1 && wallNotThere) {
+                canMove.push(move)
+            }
         }
     })
     return canMove
 }
 
 function kill(element, deathMessage, didFell) {
+    if (useBlackList) {
+        if (didFell) {
+            blackList.push({
+                "row": element.row,
+                "column": element.column
+            })
+        }
+    }
+    else{
+        let moves = [[1, 0], [-1, 0], [0, 1], [0, -1]]
+        moves.forEach(move => {
+            let isPlayerThere = players.findIndex(e => e.row === element.row - move[0] && e.column === element.column - move[1])
+            
+            if (isPlayerThere != -1) {
+                let otherWhiteList = players[players.findIndex(e => e.row === element.row - move[0] && e.column === element.column - move[1])].whiteList
+                let isContained = whitelist.findIndex(e => e === [element.row - move[0],element.column - move[1]])
+                if (isContained == -1) {
+                    otherWhiteList.push([element.row - move[0],element.column - move[1]])
+                }
+                console.log(otherWhiteList)
+            }
+        })
+    }
+
+
+
     let li = document.createElement("li")
     li.innerHTML = "Player " + element.id + deathMessage
     KILLS.appendChild(li)
     let index = players.findIndex(e => e.id === element.id);
-    if (didFell) {
-        blackList.push({
-            "row": element.row,
-            "column": element.column
-        })
-        console.log(blackList)
-    }
 
     if (index !== -1) {
         players.splice(index, 1)
