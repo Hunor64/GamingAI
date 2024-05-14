@@ -2,9 +2,10 @@ let GAMEDIV = document.querySelector(".GameDiv")
 let KILLS = document.querySelector(".kills")
 
 let inter
-
+let avalibleLocations = []
 let players = []
 let mines = []
+let blackList = []
 
 function ClearDiv() {
     while (GAMEDIV.lastChild) {
@@ -20,6 +21,7 @@ let columns = 0
 
 function felvesz(m, n) {
     clearInterval(inter)
+    avalibleLocations = []
     ClearDiv()
     rows = n
     columns = m
@@ -56,13 +58,11 @@ function CreatePlayers(p) {
 
     for (let i = 0; i < p; i++) {
         let isDed = false
-        let randomRow = RandomGen(0, rows, true, false)
-        let randowColumn = RandomGen(0, columns, false, false)
-        mines.forEach(element => {
-            if (randomRow == element.row && randowColumn == element.column) {
-                isDed = true
-            }
-        })
+        let location = RandomGen()
+        console.log(location[0])
+        let randomRow = location[0] 
+        let randowColumn = location[1]
+
         if (!isDed) {
             players.push({
                 "id": i + 1,
@@ -90,8 +90,9 @@ function CreatePlayers(p) {
 
 function SpawnMines(n) {
     for (let i = 0; i < n; i++) {
-        let randomRow = RandomGen(0, rows, true, true)
-        let randowColumn = RandomGen(0, columns, false, true)
+        let location = RandomGen(0, rows, true, false)
+        let randomRow = location[0] 
+        let randowColumn = location[1]
         mines.push({
             "row": randomRow,
             "column": randowColumn
@@ -139,6 +140,7 @@ function MovePlayers() {
                 }
                 else {
                     moveDir = 2
+                    console.log("moved to 2")
                 }
             }
             if (moveDir == 2) {
@@ -149,6 +151,7 @@ function MovePlayers() {
                 }
                 else {
                     moveDir = 3
+                    console.log("moved to 3")
                 }
             }
             if (moveDir == 3) {
@@ -159,6 +162,8 @@ function MovePlayers() {
                 }
                 else {
                     moveDir = 4
+                    console.log("moved to 4")
+
                 }
             }
             if (moveDir == 4) {
@@ -169,6 +174,7 @@ function MovePlayers() {
                 }
                 else {
                     moveDir = 1
+                    console.log("moved to 1")
                 }
             }
         }
@@ -190,7 +196,9 @@ function MovePlayers() {
 }
 function IsPlayerThere(row, column) {
     let i = players.findIndex(e => e.row === row && e.column === column);
-    if (i !== -1) {
+    let mines = blackList.findIndex(e => e.row === row && e.column === column);
+    if (i !== -1 && mines !== -1) {
+        console.log(e.row , row)
         return true
     }
     else {
@@ -204,46 +212,29 @@ function kill(element,deathMSG) {
     console.log("Player " + element.id + " was kiled by "+deathMSG)
     KILLS.appendChild(li)
     let index = players.findIndex(e => e.id === element.id);
+    blackList.push({
+        "row": element.row,
+        "column": element.column
+    })
     if (index !== -1) {
         players.splice(index, 1);
     }
+    console.log(blackList)
 }
 
-function RandomGen(min, max, isRow, isMine) {
-    let ran = 0
-    while (ran != 100) {
-        let rnd = Math.floor(Math.random() * (max - min)) + min;
-        let i
-        if (isRow) {
-            if (!isMine) {
-                i = players.findIndex(e => e.row === rnd);
-                console.log("player 1")
-
-            }
-            else {
-                i = mines.findIndex(e => e.row === rnd);
-                console.log("mine 1")
-            }
+function RandomGen() {
+    if(avalibleLocations.length == 0){
+        for (let generatedRows = 0; generatedRows < rows; generatedRows++) {
+            for (let generatedColumns = 0; generatedColumns < columns; generatedColumns++) {
+                avalibleLocations.push([generatedRows,generatedColumns])
+            }                        
         }
-        else {
-            if (!isMine) {
-                i = players.findIndex(e => e.column === rnd);
-                console.log("player 2")
-
-            }
-            else {
-                i = mines.findIndex(e => e.column == rnd);
-                console.log("mine 2")
-
-            }
-        }
-        if (i == -1) {
-            return rnd
-        }
-        ran++
-        if (players.length == rows * columns) {
-            return 0
-        }
+        console.log("Generated new locations")
     }
-    return 0
+    let generatedNumber = Math.floor(Math.random() * (avalibleLocations.length - 0 + 1) ) + 0
+    let genCoords = avalibleLocations[generatedNumber]
+    console.log(genCoords)
+    avalibleLocations.splice(generatedNumber,1)
+    console.log(avalibleLocations)
+    return genCoords
 }
