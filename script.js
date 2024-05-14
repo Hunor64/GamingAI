@@ -71,7 +71,8 @@ function CreatePlayers(p) {
             "id": i + 1,
             "class": "c" + randowColumn + "r" + randomRow,
             "column": randowColumn,
-            "row": randomRow
+            "row": randomRow,
+            "white list": []
         })
         let selectedElement = document.querySelector(".c" + randowColumn + "r" + randomRow)
         let playerChar = document.createElement("div")
@@ -99,7 +100,7 @@ function MovePlayers() {
 
         let moves = GetAllPossibleMoves(element.row, element.column)
         if (moves.length == 0) {
-            kill(element, " was squished to death")
+            kill(element, " was squished to death",false)
         }
         else {
             let moveInd = Math.floor(Math.random() * moves.length)
@@ -111,7 +112,7 @@ function MovePlayers() {
         }
         let isOnMine = mines.findIndex(e => e.row === element.row && e.column === element.column)
         if (isOnMine != -1) {
-            kill(element, " fell to their demise")
+            kill(element, " fell to their demise",true)
         }
 
         players.forEach(element => {
@@ -141,16 +142,18 @@ function GetAllPossibleMoves(row, column) {
     return canMove
 }
 
-function kill(element, deathMessage) {
+function kill(element, deathMessage, didFell) {
     let li = document.createElement("li")
     li.innerHTML = "Player " + element.id + deathMessage
     KILLS.appendChild(li)
     let index = players.findIndex(e => e.id === element.id);
-    blackList.push({
-        "row": element.row,
-        "column": element.column
-    })
-    console.log(blackList)
+    if (didFell) {
+        blackList.push({
+            "row": element.row,
+            "column": element.column
+        })
+        console.log(blackList)
+    }
 
     if (index !== -1) {
         players.splice(index, 1)
