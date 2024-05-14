@@ -11,7 +11,10 @@ let players = []
 let mines = []
 let blackList = []
 
-function loadMap(m, n) {
+function loadMap() {
+    rows = document.querySelector('.width').value
+    columns = document.querySelector('.height').value
+
     players = []
     mines = []
     KILLS.innerHTML = ""
@@ -21,11 +24,9 @@ function loadMap(m, n) {
     while (GAMEDIV.lastChild) {
         GAMEDIV.removeChild(GAMEDIV.lastChild)
     }
-    rows = n
-    columns = m
-    for (let i = 0; i < m; i++) {
+    for (let i = 0; i < columns; i++) {
         let row = document.createElement("div")
-        for (let d = 0; d < n; d++) {
+        for (let d = 0; d < rows; d++) {
             let element = document.createElement("div")
             element.classList.add("element")
             element.classList.add("c" + i + "r" + d)
@@ -46,8 +47,8 @@ function UpdateSliders() {
 }
 
 
-function CreatePlayers(p) {
-    loadMap(document.querySelector('.height').value, document.querySelector('.width').value)
+function CreatePlayers() {
+    loadMap()
 
     let mineCount = document.querySelector(".mine").value
 
@@ -62,7 +63,7 @@ function CreatePlayers(p) {
         document.querySelector(".c" + randowColumn + "r" + randomRow).classList.add("mine")
     }
 
-    for (let i = 0; i < p; i++) {
+    for (let i = 0; i < document.querySelector('.players').value; i++) {
         let location = RandomGen()
         let randomRow = location[0]
         let randowColumn = location[1]

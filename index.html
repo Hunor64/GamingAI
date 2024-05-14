@@ -10,12 +10,12 @@
 <body>
     <div class="container">
         <div class="buttons">
-            <button class="btnFelvesz" onclick="loadMap(document.querySelector('.height').value,document.querySelector('.width').value)">Felvesz</button>
-            <button class="btnIndit" onclick="CreatePlayers(document.querySelector('.players').value)">Indít</button>
+            <button class="btnFelvesz" onclick="loadMap()">Load Map</button>
+            <button class="btnIndit" onclick="CreatePlayers()">Start</button>
         </div>
         <div class="sliders">
-            <p>height</p><input type="range" min="1" max="10" class="height" value="5" oninput="UpdateSliders()">
-            <p>width</p><input type="range" min="1" max="20" class="width" value="10" oninput="UpdateSliders()">
+            <p>width</p><input type="range" min="1" max="10" class="height" value="5" oninput="UpdateSliders()">
+            <p>height</p><input type="range" min="1" max="20" class="width" value="10" oninput="UpdateSliders()">
             <p>mines</p><input type="range" min="1" max="10" class="mine" value="5">
             <p>players</p><input type="range" min="1" max="10" class="players" value="5">
         </div>
