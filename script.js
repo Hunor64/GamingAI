@@ -12,6 +12,10 @@ let mines = []
 let blackList = []
 
 function loadMap(m, n) {
+    players = []
+    mines = []
+    KILLS.innerHTML = ""
+
     clearInterval(inter)
     avalibleLocations = []
     while (GAMEDIV.lastChild) {
@@ -31,10 +35,6 @@ function loadMap(m, n) {
         GAMEDIV.appendChild(row)
     }
     document.querySelector(".btnIndit").disabled = false;
-
-    players = []
-    mines = []
-    KILLS.innerHTML = ""
 }
 
 function UpdateSliders() {
@@ -99,19 +99,19 @@ function MovePlayers() {
 
         let moves = GetAllPossibleMoves(element.row, element.column)
         if (moves.length == 0) {
-            kill(element," was squished to death")
+            kill(element, " was squished to death")
         }
         else {
             let moveInd = Math.floor(Math.random() * moves.length)
             let whereToMove = moves[moveInd]
             element.row = element.row - whereToMove[0]
-            
+
             element.column = element.column - whereToMove[1]
             element.class = "c" + element.column + "r" + element.row
         }
         let isOnMine = mines.findIndex(e => e.row === element.row && e.column === element.column)
         if (isOnMine != -1) {
-            kill(element," fell to their demise")
+            kill(element, " fell to their demise")
         }
 
         players.forEach(element => {
@@ -141,7 +141,7 @@ function GetAllPossibleMoves(row, column) {
     return canMove
 }
 
-function kill(element,deathMessage) {
+function kill(element, deathMessage) {
     let li = document.createElement("li")
     li.innerHTML = "Player " + element.id + deathMessage
     KILLS.appendChild(li)
