@@ -2,16 +2,16 @@ let GAMEDIV = document.querySelector(".GameDiv")
 let KILLS = document.querySelector(".kills")
 
 let inter
+
+let rows = 0
+let columns = 0
+
 let avalibleLocations = []
 let players = []
 let mines = []
 let blackList = []
 
-let rows = 0
-let columns = 0
-
-
-function felvesz(m, n) {
+function loadMap(m, n) {
     clearInterval(inter)
     avalibleLocations = []
     while (GAMEDIV.lastChild) {
@@ -47,8 +47,20 @@ function UpdateSliders() {
 
 
 function CreatePlayers(p) {
-    felvesz(document.querySelector('.height').value, document.querySelector('.width').value)
-    SpawnMines(document.querySelector(".mine").value)
+    loadMap(document.querySelector('.height').value, document.querySelector('.width').value)
+
+    let mineCount = document.querySelector(".mine").value
+
+    for (let i = 0; i < mineCount; i++) {
+        let location = RandomGen()
+        let randomRow = location[0]
+        let randowColumn = location[1]
+        mines.push({
+            "row": randomRow,
+            "column": randowColumn
+        })
+        document.querySelector(".c" + randowColumn + "r" + randomRow).classList.add("mine")
+    }
 
     for (let i = 0; i < p; i++) {
         let location = RandomGen()
@@ -73,28 +85,6 @@ function CreatePlayers(p) {
     document.querySelector(".btnIndit").disabled = true;
 }
 
-function SpawnMines(n) {
-    for (let i = 0; i < n; i++) {
-        let location = RandomGen()
-        let randomRow = location[0]
-        let randowColumn = location[1]
-        mines.push({
-            "row": randomRow,
-            "column": randowColumn
-        })
-        document.querySelector(".c" + randowColumn + "r" + randomRow).classList.add("mine")
-    }
-}
-function PutAllPlayersOn() {
-    players.forEach(element => {
-        let selectedElement = document.querySelector(".c" + element.column + "r" + element.row)
-        let playerChar = document.createElement("div")
-        playerChar.innerText = element.id
-        playerChar.classList.add("player")
-        selectedElement.appendChild(playerChar)
-    })
-}
-
 function MovePlayers() {
     players.forEach(element => {
         for (let row = 0; row < rows; row++) {
@@ -107,28 +97,33 @@ function MovePlayers() {
             }
         }
 
-
         let moves = GetAllPossibleMoves(element.row, element.column)
         if (moves.length == 0) {
-            kill(element)
+            kill(element," was squished to death")
         }
         else {
             let moveInd = Math.floor(Math.random() * moves.length)
             let whereToMove = moves[moveInd]
             element.row = element.row - whereToMove[0]
-
+            
             element.column = element.column - whereToMove[1]
             element.class = "c" + element.column + "r" + element.row
         }
         let isOnMine = mines.findIndex(e => e.row === element.row && e.column === element.column)
         if (isOnMine != -1) {
-            kill(element)
+            kill(element," fell to their demise")
         }
 
-        PutAllPlayersOn()
-
+        players.forEach(element => {
+            let selectedElement = document.querySelector(".c" + element.column + "r" + element.row)
+            let playerChar = document.createElement("div")
+            playerChar.innerText = element.id
+            playerChar.classList.add("player")
+            selectedElement.appendChild(playerChar)
+        })
     })
 }
+
 function GetAllPossibleMoves(row, column) {
     let moves = [[1, 0], [-1, 0], [0, 1], [0, -1]]
     let canMove = []
@@ -146,9 +141,9 @@ function GetAllPossibleMoves(row, column) {
     return canMove
 }
 
-function kill(element) {
+function kill(element,deathMessage) {
     let li = document.createElement("li")
-    li.innerHTML = "Player " + element.id + " was kiled"
+    li.innerHTML = "Player " + element.id + deathMessage
     KILLS.appendChild(li)
     let index = players.findIndex(e => e.id === element.id);
     blackList.push({
